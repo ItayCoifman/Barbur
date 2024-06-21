@@ -1,0 +1,104 @@
+<form id="baby-tracking-form">
+  <button type="button" id="tit-left" onclick="toggleButton('tit-left')">
+    🍼<br> Tit Left
+  </button>
+  <button type="button" id="tit-right" onclick="toggleButton('tit-right')">
+    🍼<br> Tit Right
+  </button>
+  <button type="button" id="poop" onclick="toggleButton('poop')">
+    💩<br> Poop
+  </button>
+  <button type="button" id="pee" onclick="toggleButton('pee')">
+    🚽<br> Pee
+  </button>
+  <button type="button" id="other" onclick="toggleButton('other')">
+    ❓<br> Other
+  </button>
+  <input type="text" id="other-text" placeholder="Enter details...">
+  <button type="button" onclick="submitForm()">Submit</button>
+</form>
+<style>
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    height: 80px;
+    font-size: 14px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: white;
+    transition: background-color 0.3s;
+  }
+  button.active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+  button[type="button"]:last-child {
+    width: calc(100% - 20px);
+  }
+</style>
+<script>
+  const script_url = 'https://script.google.com/macros/s/AKfycbxb4lr16ENjhGb1EnVO3B6r-5anED47guZyYptBiTpiMWTJbKzbnZStQdzSwZsx02kK/exec'
+  var formData = {
+    'tit-left': 0,
+    'tit-right': 0,
+    'poop': 0,
+    'pee': 0,
+    'other': 0,
+    'text': ''
+  };
+
+  function toggleButton(id) {
+    formData[id] = formData[id] === 0 ? 1 : 0;
+    document.getElementById(id).classList.toggle('active');
+  }
+
+  function submitForm() {
+    formData.text = document.getElementById('other-text').value;
+    fetch(script_url, {
+      method: 'POST',
+	  mode:'no-cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      console.log('Data submitted successfully');
+      resetForm();
+    }).catch(error => {
+      console.error('Error submitting data:', error);
+    });
+  }
+
+  function resetForm() {
+    formData = {
+      'tit-left': 0,
+      'tit-right': 0,
+      'poop': 0,
+      'pee': 0,
+      'other': 0,
+      'text': ''
+    };
+    document.getElementById('baby-tracking-form').reset();
+    document.querySelectorAll('#baby-tracking-form button').forEach(button => {
+      button.classList.remove('active');
+    });
+  }
+</script>
